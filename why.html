@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Why Meditate — Meditate</title>
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css" />
+  <script src="https://unpkg.com/htmx.org@1.9.12"></script>
+
+  <style>
+    :root { --pico-font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+    .video-wrap {
+      position: relative; width: 100%; aspect-ratio: 16 / 9;
+      border-radius: var(--pico-border-radius); overflow: hidden; margin: 1.5rem 0;
+    }
+    .video-wrap iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+    blockquote { border-left: 0.25rem solid var(--pico-primary); }
+    article { height: 100%; }
+    .benefits { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; }
+  </style>
+</head>
+<body>
+  <nav class="container-fluid">
+    <ul><li><strong>🧘 Meditate</strong></li></ul>
+    <ul>
+      <li><a href="index.html">Sessions</a></li>
+      <li><a href="why.html" aria-current="page">Why Meditate</a></li>
+      <li><a href="pabb.html">The PABB Goal</a></li>
+    </ul>
+  </nav>
+
+  <main class="container">
+    <hgroup>
+      <h1>Why we meditate</h1>
+      <p>A few minutes of stillness, repeated daily, changes how you meet everything else.</p>
+    </hgroup>
+
+    <p>
+      Meditation is the practice of training attention. By returning, again and again, to a single
+      anchor — your breath, a sound, the body — you build the capacity to notice when the mind has
+      wandered and to come back without judgement. That small skill compounds: calmer reactions,
+      clearer thinking, and a steadier baseline mood.
+    </p>
+
+    <section class="benefits">
+      <article>
+        <h3>🧠 Clearer thinking</h3>
+        <p>Stepping back from the stream of thought creates space to respond rather than react.</p>
+      </article>
+      <article>
+        <h3>😌 Lower stress</h3>
+        <p>Slow, attentive breathing calms the nervous system and lowers everyday anxiety.</p>
+      </article>
+      <article>
+        <h3>🎯 Better focus</h3>
+        <p>Each return to the anchor is a rep for attention — concentration you carry into work and life.</p>
+      </article>
+      <article>
+        <h3>❤️ Emotional balance</h3>
+        <p>Watching emotions come and go loosens their grip and builds resilience over time.</p>
+      </article>
+    </section>
+
+    <h2 style="margin-top:2.5rem;">How Ray Dalio promotes meditation</h2>
+    <p>
+      Ray Dalio — founder of Bridgewater Associates, the world's largest hedge fund — credits
+      Transcendental Meditation as <em>"the single biggest influence"</em> on his life and success.
+      He has practised twice a day for decades and openly encourages it as a tool for calm,
+      creativity, and clear decision-making.
+    </p>
+
+    <div class="video-wrap">
+      <iframe
+        src="https://www.youtube.com/embed/sBIWQGYbVkc?rel=0&modestbranding=1"
+        title="Ray Dalio on meditation"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowfullscreen></iframe>
+    </div>
+
+    <blockquote>
+      "Meditation more than anything in my life was the biggest ingredient of whatever success
+      I've had."
+      <footer><cite>— Ray Dalio</cite></footer>
+    </blockquote>
+
+    <p style="margin-top:2rem;">
+      <a href="index.html" role="button">🧘 Start a session →</a>
+    </p>
+
+    <footer style="text-align:center; opacity:0.6; font-size:0.85rem; margin-top:2rem;">
+      <small>Built with htmx + Pico.css.</small>
+    </footer>
+  </main>
+</body>
+</html>

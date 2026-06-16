@@ -1,0 +1,10 @@
+{
+  "name": "meditate",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Distraction-free meditation app with a MongoDB-backed session counter.",
+  "dependencies": {
+    "mongodb": "^6.3.0"
+  }
+}

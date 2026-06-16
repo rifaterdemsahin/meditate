@@ -79,6 +79,15 @@
 <body>
   <button class="focus-toggle outline secondary" onclick="toggleFocus()">⛶ Focus</button>
 
+  <nav class="container-fluid distract">
+    <ul><li><strong>🧘 Meditate</strong></li></ul>
+    <ul>
+      <li><a href="index.html" aria-current="page">Sessions</a></li>
+      <li><a href="why.html">Why Meditate</a></li>
+      <li><a href="pabb.html">The PABB Goal</a></li>
+    </ul>
+  </nav>
+
   <main class="container">
     <hgroup class="distract" style="text-align:center; margin-top:1rem;">
       <h1>🧘 Meditate</h1>
@@ -93,6 +102,7 @@
         <button class="secondary" onclick="pauseTimer()">Pause</button>
         <button class="contrast outline" onclick="resetTimer()">Reset</button>
       </div>
+      <p id="counter" class="distract" style="text-align:center; opacity:0.75; margin-top:1rem;">🔥 Loading your sessions…</p>
     </section>
 
     <!-- Session selector -->
@@ -206,6 +216,7 @@
     function finish() {
       pauseTimer();
       render();
+      bumpCounter();
       // gentle chime via Web Audio
       try {
         const ctx = new (window.AudioContext || window.webkitAudioContext)();
@@ -223,6 +234,40 @@
 
     function toggleFocus() {
       document.body.classList.toggle("focus");
+    }
+
+    // --- Meditation counter (MongoDB Atlas via serverless, localStorage fallback) ---
+    const COUNTER_API = "/api/meditations";
+    const COUNT_KEY = "meditate-count";
+    const counterEl = document.getElementById("counter");
+
+    function showCount(n, synced) {
+      const tag = synced ? "" : " (this device)";
+      counterEl.textContent = `🔥 You've completed ${n} meditation${n === 1 ? "" : "s"}${tag}.`;
+    }
+
+    async function loadCounter() {
+      try {
+        const r = await fetch(COUNTER_API);
+        if (!r.ok) throw new Error("no api");
+        const { count } = await r.json();
+        showCount(count, true);
+      } catch (e) {
+        showCount(Number(localStorage.getItem(COUNT_KEY) || 0), false);
+      }
+    }
+
+    async function bumpCounter() {
+      try {
+        const r = await fetch(COUNTER_API, { method: "POST" });
+        if (!r.ok) throw new Error("no api");
+        const { count } = await r.json();
+        showCount(count, true);
+      } catch (e) {
+        const n = Number(localStorage.getItem(COUNT_KEY) || 0) + 1;
+        localStorage.setItem(COUNT_KEY, n);
+        showCount(n, false);
+      }
     }
 
     // --- Notes (localStorage + markdown download) ---
@@ -264,6 +309,7 @@
     // init
     render();
     loadVideo(5, false);
+    loadCounter();
   </script>
 </body>
 </html>

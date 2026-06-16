@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The PABB Goal — Meditate</title>
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css" />
+  <script src="https://unpkg.com/htmx.org@1.9.12"></script>
+
+  <style>
+    :root { --pico-font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+    blockquote { border-left: 0.25rem solid var(--pico-primary); }
+    .letter {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 2.5rem; height: 2.5rem; border-radius: 0.5rem;
+      background: var(--pico-primary); color: var(--pico-primary-inverse);
+      font-weight: 700; font-size: 1.4rem; margin-right: 0.75rem; flex: 0 0 auto;
+    }
+    .pabb-item { display: flex; align-items: flex-start; gap: 0.5rem; margin-bottom: 1.75rem; }
+    .pabb-item hgroup { margin-bottom: 0.5rem; }
+    .acronym { letter-spacing: 0.3em; color: var(--pico-primary); font-weight: 700; }
+  </style>
+</head>
+<body>
+  <nav class="container-fluid">
+    <ul><li><strong>🧘 Meditate</strong></li></ul>
+    <ul>
+      <li><a href="index.html">Sessions</a></li>
+      <li><a href="why.html">Why Meditate</a></li>
+      <li><a href="pabb.html" aria-current="page">The PABB Goal</a></li>
+    </ul>
+  </nav>
+
+  <main class="container">
+    <hgroup>
+      <h1>The goal of meditation: <span class="acronym">PABB</span></h1>
+      <p>Four practices that meditation trains — <strong>P</strong>ain, <strong>A</strong>bstinence,
+      <strong>B</strong>arriers, and <strong>B</strong>oredom.</p>
+    </hgroup>
+
+    <p>
+      Meditation isn't an escape from life — it's rehearsal for it. Sitting with whatever arises
+      builds four capacities that map neatly onto the acronym <strong>PABB</strong>. Each one turns
+      something we usually avoid into a source of strength.
+    </p>
+
+    <div class="pabb-item">
+      <span class="letter">P</span>
+      <div>
+        <hgroup>
+          <h2>Pain — focus on it first</h2>
+          <p>Turn toward discomfort instead of away from it.</p>
+        </hgroup>
+        <p>
+          The mind's default is to flinch from pain — physical, emotional, the ache of a hard truth.
+          Meditation teaches you to <em>focus on it first</em>: to observe a difficult sensation or
+          feeling with steady, curious attention. What you can sit with, you can understand; what you
+          understand stops running your life from the shadows.
+        </p>
+      </div>
+    </div>
+
+    <div class="pabb-item">
+      <span class="letter">A</span>
+      <div>
+        <hgroup>
+          <h2>Abstinence — from unhealthy, addictive behaviors</h2>
+          <p>Create a gap between urge and action.</p>
+        </hgroup>
+        <p>
+          Every craving is a wave: it rises, peaks, and passes if you let it. By watching an impulse
+          without immediately obeying it, meditation builds the pause where choice lives. That pause
+          is how you abstain from the addictive, not-healthy behaviors that hijack attention — the
+          endless scroll, the reflexive snack, the numbing habit.
+        </p>
+      </div>
+    </div>
+
+    <div class="pabb-item">
+      <span class="letter">B</span>
+      <div>
+        <hgroup>
+          <h2>Barriers — the obstacle is the way</h2>
+          <p>After Ryan Holiday's <em>The Obstacle Is the Way</em>.</p>
+        </hgroup>
+        <p>
+          Drawing on Stoic philosophy, Ryan Holiday argues that the impediment to action advances
+          action — <strong>"the obstacle is the way."</strong> Meditation is daily practice at meeting
+          barriers with composure: each wandering thought, each restless minute is an obstacle you
+          calmly turn into the path itself. The block becomes the route.
+        </p>
+        <blockquote>
+          "The obstacle in the path becomes the path. Never forget, within every obstacle is an
+          opportunity to improve our condition."
+          <footer><cite>— Ryan Holiday, The Obstacle Is the Way</cite></footer>
+        </blockquote>
+      </div>
+    </div>
+
+    <div class="pabb-item">
+      <span class="letter">B</span>
+      <div>
+        <hgroup>
+          <h2>Boredom — the trigger for creativity</h2>
+          <p>Let the empty space do its work.</p>
+        </hgroup>
+        <p>
+          We reach for stimulation the instant boredom appears — and kill the very state where new
+          ideas are born. Meditation makes friends with the empty space. When you stop filling every
+          gap, the mind wanders productively, connects distant dots, and surprises you. Boredom,
+          tolerated, becomes the trigger for creativity.
+        </p>
+      </div>
+    </div>
+
+    <p style="margin-top:2rem;">
+      <a href="index.html" role="button">🧘 Practice PABB — start a session →</a>
+    </p>
+
+    <footer style="text-align:center; opacity:0.6; font-size:0.85rem; margin-top:2rem;">
+      <small>Built with htmx + Pico.css.</small>
+    </footer>
+  </main>
+</body>
+</html>
