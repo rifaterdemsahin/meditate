@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Meditate — Distraction Free</title>
+
+  <!-- Pico.css -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css" />
+  <!-- htmx -->
+  <script src="https://unpkg.com/htmx.org@1.9.12"></script>
+
+  <style>
+    :root {
+      --pico-font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    }
+    body {
+      min-height: 100vh;
+    }
+    .timer {
+      font-variant-numeric: tabular-nums;
+      font-size: clamp(3rem, 12vw, 6rem);
+      font-weight: 600;
+      text-align: center;
+      letter-spacing: 0.05em;
+      margin: 0;
+    }
+    .timer.done {
+      color: var(--pico-primary);
+    }
+    .session-buttons {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0.5rem;
+    }
+    .session-buttons button[aria-current="true"] {
+      box-shadow: 0 0 0 2px var(--pico-primary);
+    }
+    .controls {
+      display: flex;
+      gap: 0.5rem;
+      justify-content: center;
+    }
+    .controls button {
+      max-width: 8rem;
+    }
+    .video-wrap {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      border-radius: var(--pico-border-radius);
+      overflow: hidden;
+    }
+    .video-wrap iframe {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      border: 0;
+    }
+    /* Distraction-free mode hides everything except the timer + video */
+    body.focus .distract { display: none !important; }
+    body.focus { background: #000; }
+    .focus-toggle {
+      position: fixed;
+      top: 1rem;
+      right: 1rem;
+      z-index: 10;
+      width: auto;
+      padding: 0.4rem 0.8rem;
+    }
+    footer {
+      text-align: center;
+      opacity: 0.6;
+      font-size: 0.85rem;
+    }
+  </style>
+</head>
+<body>
+  <button class="focus-toggle outline secondary" onclick="toggleFocus()">⛶ Focus</button>
+
+  <main class="container">
+    <hgroup class="distract" style="text-align:center; margin-top:1rem;">
+      <h1>🧘 Meditate</h1>
+      <p>Pick a session, breathe, and be present.</p>
+    </hgroup>
+
+    <!-- Timer -->
+    <section>
+      <p id="timer" class="timer">05:00</p>
+      <div class="controls distract">
+        <button id="startBtn" onclick="startTimer()">Start</button>
+        <button class="secondary" onclick="pauseTimer()">Pause</button>
+        <button class="contrast outline" onclick="resetTimer()">Reset</button>
+      </div>
+    </section>
+
+    <!-- Session selector -->
+    <section class="distract">
+      <div class="session-buttons">
+        <button class="outline" data-min="5"  aria-current="true"  onclick="selectSession(5, this)">5 min</button>
+        <button class="outline" data-min="10" onclick="selectSession(10, this)">10 min</button>
+        <button class="outline" data-min="15" onclick="selectSession(15, this)">15 min</button>
+        <button class="outline" data-min="20" onclick="selectSession(20, this)">20 min</button>
+      </div>
+    </section>
+
+    <!-- Video -->
+    <section>
+      <div class="video-wrap">
+        <iframe id="player"
+          src=""
+          title="Meditation session"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen></iframe>
+      </div>
+    </section>
+
+    <!-- Notes -->
+    <section class="distract">
+      <h2>📝 Notes</h2>
+      <textarea id="notes" rows="6" placeholder="How do you feel? Jot down a thought, an intention, or a reflection..."></textarea>
+      <div class="controls" style="justify-content:flex-start; gap:0.5rem;">
+        <button onclick="downloadNotes()">⬇ Download as Markdown</button>
+        <button class="secondary outline" onclick="clearNotes()">Clear</button>
+      </div>
+      <small id="saveStatus"></small>
+    </section>
+
+    <footer class="distract">
+      <small>Built with htmx + Pico.css · Your notes are saved locally in your browser.</small>
+    </footer>
+  </main>
+
+  <script>
+    // Curated meditation videos per session length (YouTube embed IDs).
+    const SESSIONS = {
+      5:  { id: "inpok4MKVLM", label: "5 Minute Meditation" },
+      10: { id: "ZToicYcHIOU", label: "10 Minute Meditation" },
+      15: { id: "ZToicYcHIOU", label: "15 Minute Meditation" },
+      20: { id: "Fpiw2hH-dlc", label: "20 Minute Meditation" },
+    };
+
+    let totalSeconds = 5 * 60;
+    let remaining = totalSeconds;
+    let ticker = null;
+    let running = false;
+
+    const timerEl = document.getElementById("timer");
+    const playerEl = document.getElementById("player");
+
+    function fmt(s) {
+      const m = Math.floor(s / 60).toString().padStart(2, "0");
+      const sec = (s % 60).toString().padStart(2, "0");
+      return `${m}:${sec}`;
+    }
+
+    function render() {
+      timerEl.textContent = fmt(remaining);
+      timerEl.classList.toggle("done", remaining === 0);
+    }
+
+    function loadVideo(min, autoplay) {
+      const s = SESSIONS[min];
+      const auto = autoplay ? "&autoplay=1" : "";
+      playerEl.src = `https://www.youtube.com/embed/${s.id}?rel=0&modestbranding=1${auto}`;
+    }
+
+    function selectSession(min, btn) {
+      document.querySelectorAll(".session-buttons button")
+        .forEach(b => b.removeAttribute("aria-current"));
+      if (btn) btn.setAttribute("aria-current", "true");
+      totalSeconds = min * 60;
+      remaining = totalSeconds;
+      pauseTimer();
+      render();
+      loadVideo(min, false);
+    }
+
+    function startTimer() {
+      if (running) return;
+      running = true;
+      document.getElementById("startBtn").textContent = "Running…";
+      ticker = setInterval(() => {
+        if (remaining > 0) {
+          remaining--;
+          render();
+        } else {
+          finish();
+        }
+      }, 1000);
+    }
+
+    function pauseTimer() {
+      running = false;
+      clearInterval(ticker);
+      document.getElementById("startBtn").textContent = "Start";
+    }
+
+    function resetTimer() {
+      pauseTimer();
+      remaining = totalSeconds;
+      render();
+    }
+
+    function finish() {
+      pauseTimer();
+      render();
+      // gentle chime via Web Audio
+      try {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        const o = ctx.createOscillator();
+        const g = ctx.createGain();
+        o.connect(g); g.connect(ctx.destination);
+        o.frequency.value = 528;
+        g.gain.setValueAtTime(0.0001, ctx.currentTime);
+        g.gain.exponentialRampToValueAtTime(0.3, ctx.currentTime + 0.05);
+        g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 2.5);
+        o.start();
+        o.stop(ctx.currentTime + 2.5);
+      } catch (e) {}
+    }
+
+    function toggleFocus() {
+      document.body.classList.toggle("focus");
+    }
+
+    // --- Notes (localStorage + markdown download) ---
+    const notesEl = document.getElementById("notes");
+    const statusEl = document.getElementById("saveStatus");
+    const STORE_KEY = "meditate-notes";
+
+    notesEl.value = localStorage.getItem(STORE_KEY) || "";
+    let saveTimer = null;
+    notesEl.addEventListener("input", () => {
+      clearTimeout(saveTimer);
+      saveTimer = setTimeout(() => {
+        localStorage.setItem(STORE_KEY, notesEl.value);
+        statusEl.textContent = "Saved ✓";
+        setTimeout(() => (statusEl.textContent = ""), 1500);
+      }, 400);
+    });
+
+    function downloadNotes() {
+      const date = new Date();
+      const stamp = date.toISOString().slice(0, 10);
+      const md = `# Meditation Notes\n\n**Date:** ${date.toLocaleString()}\n\n---\n\n${notesEl.value || "_No notes yet._"}\n`;
+      const blob = new Blob([md], { type: "text/markdown" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `meditation-notes-${stamp}.md`;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    function clearNotes() {
+      if (confirm("Clear all notes?")) {
+        notesEl.value = "";
+        localStorage.removeItem(STORE_KEY);
+      }
+    }
+
+    // init
+    render();
+    loadVideo(5, false);
+  </script>
+</body>
+</html>
