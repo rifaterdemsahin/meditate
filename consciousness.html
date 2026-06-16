@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Maps of Consciousness — Meditate</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css" />
+  <script src="https://unpkg.com/htmx.org@1.9.12"></script>
+  <style>
+    :root { --pico-font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+    .level { display: flex; align-items: center; gap: 0.75rem; padding: 0.4rem 0; border-bottom: 1px solid var(--pico-muted-border-color); }
+    .bar { height: 0.6rem; border-radius: 1rem; background: var(--pico-primary); flex: 0 0 auto; }
+    .lvl-name { width: 9rem; flex: 0 0 auto; font-weight: 600; }
+    .lvl-cal { width: 3.5rem; flex: 0 0 auto; opacity: 0.7; font-variant-numeric: tabular-nums; }
+    blockquote { border-left: 0.25rem solid var(--pico-primary); }
+  </style>
+</head>
+<body>
+  <nav class="container-fluid">
+    <ul><li><strong>🧘 Meditate</strong></li></ul>
+    <ul>
+      <li><a href="index.html">Sessions</a></li>
+      <li>
+        <details class="dropdown">
+          <summary>Learn</summary>
+          <ul>
+            <li><a href="why.html">Why Meditate</a></li>
+            <li><a href="pabb.html">The PABB Goal</a></li>
+            <li><a href="reflections.html">Intentional Reflections</a></li>
+            <li><a href="position.html">Posture &amp; Position</a></li>
+            <li><a href="breathing.html">Ohmmm Breathing</a></li>
+            <li><a href="wandering.html">Mind Wandering</a></li>
+            <li><a href="consciousness.html" aria-current="page">Maps of Consciousness</a></li>
+          </ul>
+        </details>
+      </li>
+      <li><a href="generate.html">🎙 Generate Audio</a></li>
+    </ul>
+  </nav>
+
+  <main class="container">
+    <hgroup>
+      <h1>Maps of consciousness</h1>
+      <p>A meditation on the spectrum of states — from contraction to expansion.</p>
+    </hgroup>
+
+    <p>
+      Many contemplative traditions describe consciousness as a <strong>spectrum</strong> of states
+      we can move through. One well-known framing is David R. Hawkins' <em>Map of Consciousness</em>,
+      which arranges states from the heavy, contracted emotions up toward the light, expansive ones.
+      Used as a meditation, it becomes a way to <strong>notice where you are</strong> and gently
+      incline toward openness.
+    </p>
+
+    <h2>The scale</h2>
+    <div id="scale"></div>
+    <small style="opacity:0.6;">A contemplative model, not a scientific measure — use it to locate and soften, not to judge.</small>
+
+    <h2 style="margin-top:2rem;">A guided sitting</h2>
+    <ol>
+      <li><strong>Arrive.</strong> Settle into posture and take three slow "ohmmm" breaths.</li>
+      <li><strong>Locate.</strong> Without judgement, sense where you are on the map right now.</li>
+      <li><strong>Allow.</strong> Let whatever is present be fully felt — contraction included.</li>
+      <li><strong>Incline.</strong> With each out-breath, soften and open one notch toward acceptance, then love.</li>
+      <li><strong>Rest.</strong> Abide in spacious awareness — the witness behind every state.</li>
+    </ol>
+
+    <blockquote>
+      "Letting go of the lower levels and choosing love, peace, and acceptance is itself the practice."
+      <footer><cite>— after David R. Hawkins, <em>Power vs. Force</em></cite></footer>
+    </blockquote>
+
+    <p style="margin-top:2rem;"><a href="index.html" role="button">🧘 Start a session →</a></p>
+    <footer style="text-align:center; opacity:0.6; font-size:0.85rem; margin-top:2rem;"><small>Built with htmx + Pico.css.</small></footer>
+  </main>
+
+  <script>
+    // David Hawkins' Map of Consciousness (calibrated levels, low → high).
+    const LEVELS = [
+      ["Shame", 20], ["Guilt", 30], ["Apathy", 50], ["Grief", 75],
+      ["Fear", 100], ["Desire", 125], ["Anger", 150], ["Pride", 175],
+      ["Courage", 200], ["Neutrality", 250], ["Willingness", 310],
+      ["Acceptance", 350], ["Reason", 400], ["Love", 500],
+      ["Joy", 540], ["Peace", 600], ["Enlightenment", 700],
+    ];
+    const max = 700;
+    const el = document.getElementById("scale");
+    LEVELS.forEach(([name, cal]) => {
+      const row = document.createElement("div");
+      row.className = "level";
+      const pct = Math.max(6, (cal / max) * 100);
+      row.innerHTML =
+        `<span class="lvl-name">${name}</span>` +
+        `<span class="lvl-cal">${cal}</span>` +
+        `<span class="bar" style="width:${pct}%; opacity:${0.4 + (cal / max) * 0.6}"></span>`;
+      el.appendChild(row);
+    });
+  </script>
+</body>
+</html>

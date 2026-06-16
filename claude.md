@@ -7,11 +7,17 @@ serverless function that tracks how many sessions you've completed in MongoDB At
 
 | File | Route | What it is |
 | --- | --- | --- |
-| `index.html` | Sessions | Timer, session presets, video, notes, session counter |
+| `index.html` | Sessions | Timer, presets, video, notes, counter, live scoreboard |
 | `why.html` | Why Meditate | Benefits of meditation + how Ray Dalio promotes it (video) |
 | `pabb.html` | The PABB Goal | The goal of meditation as PABB (Pain, Abstinence, Barriers, Boredom) |
+| `reflections.html` | Intentional Reflections | Pre/post-session intention & reflection prompts |
+| `position.html` | Posture & Position | Sitting positions + seven-point posture checklist |
+| `breathing.html` | Ohmmm Breathing | Om-chant technique with an animated breath pacer |
+| `wandering.html` | Mind Wandering | Why the mind wanders + the four-step return |
+| `consciousness.html` | Maps of Consciousness | Hawkins-style spectrum meditation |
+| `generate.html` | Generate Audio | fal.ai voices + scripts → Azure-stored MP3s |
 
-A project nav menu at the top links all three pages.
+A project nav menu at the top links all pages (info pages grouped under a "Learn" dropdown).
 
 ## Features
 
@@ -74,6 +80,35 @@ The function uses database `meditate`, collection `counters`, document `_id: "me
 
 > On plain GitHub Pages (no serverless), the counter automatically falls back to a
 > per-device count in `localStorage`, so the app still works everywhere.
+
+## Live scoreboard — presence (MongoDB)
+
+`api/presence.js` powers the home-page "game" scoreboard:
+
+- `POST /api/presence?id=<clientId>` → records a heartbeat, returns `{ active, total }`.
+- `GET /api/presence` → `{ active, total }` without recording.
+
+The page sends a heartbeat every 15s; `active` = clients seen in the last 30s (a TTL index
+expires stale heartbeats). Without a backend, the scoreboard shows a friendly simulated count.
+
+## AI audio generation — fal.ai + Azure
+
+`generate.html` creates spoken meditation MP3s:
+
+1. The user pastes a **fal.ai API key**, stored in a **cookie** (`fal_api_key`) on their device.
+2. They pick a **voice** and a **script** (a built-in series: Body Scan, Loving Kindness,
+   Morning Energy, Deep Sleep, Box Breathing, Consciousness Journey) and can edit the text.
+3. The browser calls fal.ai text-to-speech directly with the cookie key.
+4. Optionally the MP3 is uploaded to Azure via `api/audio.js` and streamed back.
+
+`api/audio.js` (Vercel serverless) stores blobs in container `audio` under a `meditations/`
+folder using `AZURE_STORAGE_CONNECTION_STRING`:
+
+- `POST /api/audio?name=<file>.mp3` (raw mp3 body) → `{ name, url }`.
+- `GET /api/audio` → `{ files: [{ name, url }] }` for the cloud library.
+
+> The fal.ai key lives only in the browser cookie — it is never sent to our serverless
+> functions. The Azure connection string lives only on the server.
 
 ## Customizing videos
 

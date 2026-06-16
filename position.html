@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Posture &amp; Position — Meditate</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css" />
+  <script src="https://unpkg.com/htmx.org@1.9.12"></script>
+  <style>
+    :root { --pico-font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+    .positions { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem; }
+    .checklist li { margin-bottom: 0.5rem; }
+  </style>
+</head>
+<body>
+  <nav class="container-fluid">
+    <ul><li><strong>🧘 Meditate</strong></li></ul>
+    <ul>
+      <li><a href="index.html">Sessions</a></li>
+      <li>
+        <details class="dropdown">
+          <summary>Learn</summary>
+          <ul>
+            <li><a href="why.html">Why Meditate</a></li>
+            <li><a href="pabb.html">The PABB Goal</a></li>
+            <li><a href="reflections.html">Intentional Reflections</a></li>
+            <li><a href="position.html" aria-current="page">Posture &amp; Position</a></li>
+            <li><a href="breathing.html">Ohmmm Breathing</a></li>
+            <li><a href="wandering.html">Mind Wandering</a></li>
+            <li><a href="consciousness.html">Maps of Consciousness</a></li>
+          </ul>
+        </details>
+      </li>
+      <li><a href="generate.html">🎙 Generate Audio</a></li>
+    </ul>
+  </nav>
+
+  <main class="container">
+    <hgroup>
+      <h1>Posture &amp; position</h1>
+      <p>The body holds the mind. A stable, relaxed posture is the foundation of a steady session.</p>
+    </hgroup>
+
+    <p>
+      The classic instruction is <strong>"relaxed but alert."</strong> You want a position you can
+      hold comfortably for the whole session, with a spine that is upright without being rigid.
+      Pick whichever of these fits your body — there is no single "correct" pose.
+    </p>
+
+    <section class="positions">
+      <article>
+        <h3>🪑 Chair</h3>
+        <p>Feet flat on the floor, sitting toward the front of the seat, back self-supported and tall. Ideal for most people and for longer sits.</p>
+      </article>
+      <article>
+        <h3>🧎 Cross-legged</h3>
+        <p>On a cushion (zafu) with hips above the knees. Burmese, half-lotus, or full-lotus — choose the easiest that stays stable.</p>
+      </article>
+      <article>
+        <h3>🧘 Kneeling (seiza)</h3>
+        <p>Kneeling with a cushion or bench between the heels to take pressure off the knees and ankles.</p>
+      </article>
+      <article>
+        <h3>🛏 Lying down</h3>
+        <p>Flat on the back, arms slightly out, palms up (savasana). Great for body scans — just mind the tendency to fall asleep.</p>
+      </article>
+    </section>
+
+    <h2 style="margin-top:2rem;">The seven-point checklist</h2>
+    <ol class="checklist">
+      <li><strong>Seat</strong> — stable and grounded; hips slightly above knees if seated on the floor.</li>
+      <li><strong>Spine</strong> — upright and tall, following its natural curve, "like a stack of coins."</li>
+      <li><strong>Hands</strong> — resting on the thighs or in the lap, one cupped in the other.</li>
+      <li><strong>Shoulders</strong> — relaxed and slightly back, opening the chest.</li>
+      <li><strong>Chin</strong> — tucked very slightly, lengthening the back of the neck.</li>
+      <li><strong>Mouth &amp; jaw</strong> — soft, lips gently closed, tongue resting on the roof of the mouth.</li>
+      <li><strong>Eyes</strong> — closed, or open with a soft downward gaze a few feet ahead.</li>
+    </ol>
+
+    <p style="margin-top:2rem;">
+      Settle into your posture, then move to the <a href="breathing.html">Ohmmm breathing</a> page to
+      begin, or start a <a href="index.html">timed session</a>.
+    </p>
+
+    <p><a href="index.html" role="button">🧘 Start a session →</a></p>
+    <footer style="text-align:center; opacity:0.6; font-size:0.85rem; margin-top:2rem;"><small>Built with htmx + Pico.css.</small></footer>
+  </main>
+</body>
+</html>

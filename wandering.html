@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mind Wandering — Meditate</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css" />
+  <script src="https://unpkg.com/htmx.org@1.9.12"></script>
+  <style>
+    :root { --pico-font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+    blockquote { border-left: 0.25rem solid var(--pico-primary); }
+    .cycle { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; counter-reset: step; }
+    .cycle article::before { counter-increment: step; content: "Step " counter(step); color: var(--pico-primary); font-weight: 700; display: block; margin-bottom: 0.25rem; }
+  </style>
+</head>
+<body>
+  <nav class="container-fluid">
+    <ul><li><strong>🧘 Meditate</strong></li></ul>
+    <ul>
+      <li><a href="index.html">Sessions</a></li>
+      <li>
+        <details class="dropdown">
+          <summary>Learn</summary>
+          <ul>
+            <li><a href="why.html">Why Meditate</a></li>
+            <li><a href="pabb.html">The PABB Goal</a></li>
+            <li><a href="reflections.html">Intentional Reflections</a></li>
+            <li><a href="position.html">Posture &amp; Position</a></li>
+            <li><a href="breathing.html">Ohmmm Breathing</a></li>
+            <li><a href="wandering.html" aria-current="page">Mind Wandering</a></li>
+            <li><a href="consciousness.html">Maps of Consciousness</a></li>
+          </ul>
+        </details>
+      </li>
+      <li><a href="generate.html">🎙 Generate Audio</a></li>
+    </ul>
+  </nav>
+
+  <main class="container">
+    <hgroup>
+      <h1>Mind wandering</h1>
+      <p>The mind will wander — every time. Noticing that it has is the moment of meditation.</p>
+    </hgroup>
+
+    <p>
+      Beginners often think a wandering mind means they're "doing it wrong." The opposite is true.
+      The mind wanders by design — studies suggest we spend nearly half our waking life lost in
+      thought. The practice isn't to <em>stop</em> thoughts; it's to <strong>notice</strong> when
+      you've drifted and gently return. Each return is a rep that strengthens attention.
+    </p>
+
+    <h2>The four-step rep</h2>
+    <div class="cycle">
+      <article><strong>Focus</strong><p>Rest attention on your anchor — the breath, a sound, the body.</p></article>
+      <article><strong>Wander</strong><p>The mind drifts into thought, planning, memory. This is inevitable and fine.</p></article>
+      <article><strong>Notice</strong><p>A moment of awareness: "I'm thinking." This is the key insight — savor it.</p></article>
+      <article><strong>Return</strong><p>Without judgement, kindly bring attention back to the anchor. Begin again.</p></article>
+    </div>
+
+    <h2 style="margin-top:2rem;">The two networks</h2>
+    <p>
+      Neuroscience describes a tug-of-war between the <strong>default mode network</strong> (the
+      "wandering," self-referential mind) and the <strong>attention network</strong> (focused,
+      present awareness). Meditation trains you to notice the switch into wandering and deliberately
+      re-engage attention — a skill that carries into work, conversation, and rest.
+    </p>
+
+    <blockquote>
+      "You should sit in meditation for twenty minutes a day — unless you're too busy. Then you
+      should sit for an hour."
+      <footer><cite>— Zen proverb</cite></footer>
+    </blockquote>
+
+    <h2>Working with common distractions</h2>
+    <ul>
+      <li><strong>Thoughts</strong> — label them softly ("thinking") and return.</li>
+      <li><strong>Restlessness</strong> — notice the urge to move without immediately obeying it.</li>
+      <li><strong>Sleepiness</strong> — sit taller, open the eyes slightly, brighten the breath.</li>
+      <li><strong>Self-criticism</strong> — meet it with the same kindness you'd offer a friend.</li>
+    </ul>
+
+    <p style="margin-top:2rem;"><a href="index.html" role="button">🧘 Start a session →</a></p>
+    <footer style="text-align:center; opacity:0.6; font-size:0.85rem; margin-top:2rem;"><small>Built with htmx + Pico.css.</small></footer>
+  </main>
+</body>
+</html>

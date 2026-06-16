@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ohmmm Breathing — Meditate</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css" />
+  <script src="https://unpkg.com/htmx.org@1.9.12"></script>
+  <style>
+    :root { --pico-font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+    .breath-stage {
+      text-align: center; font-size: 1.5rem; font-weight: 600; margin-top: 1rem; min-height: 2rem;
+    }
+    .orb {
+      width: 160px; height: 160px; border-radius: 50%; margin: 2rem auto;
+      background: radial-gradient(circle at 50% 40%, var(--pico-primary), #1f6f78);
+      box-shadow: 0 0 60px -10px var(--pico-primary);
+      transition: transform 4s ease-in-out;
+      display: flex; align-items: center; justify-content: center;
+      color: #fff; font-size: 1.6rem; letter-spacing: 0.2em;
+    }
+    .orb.in  { transform: scale(1.4); }
+    .orb.out { transform: scale(0.8); }
+  </style>
+</head>
+<body>
+  <nav class="container-fluid">
+    <ul><li><strong>🧘 Meditate</strong></li></ul>
+    <ul>
+      <li><a href="index.html">Sessions</a></li>
+      <li>
+        <details class="dropdown">
+          <summary>Learn</summary>
+          <ul>
+            <li><a href="why.html">Why Meditate</a></li>
+            <li><a href="pabb.html">The PABB Goal</a></li>
+            <li><a href="reflections.html">Intentional Reflections</a></li>
+            <li><a href="position.html">Posture &amp; Position</a></li>
+            <li><a href="breathing.html" aria-current="page">Ohmmm Breathing</a></li>
+            <li><a href="wandering.html">Mind Wandering</a></li>
+            <li><a href="consciousness.html">Maps of Consciousness</a></li>
+          </ul>
+        </details>
+      </li>
+      <li><a href="generate.html">🎙 Generate Audio</a></li>
+    </ul>
+  </nav>
+
+  <main class="container">
+    <hgroup>
+      <h1>Ohmmm breathing</h1>
+      <p>Chant the primordial sound "Om" on a long exhale to settle the nervous system.</p>
+    </hgroup>
+
+    <p>
+      <strong>Om</strong> (pronounced <em>A-U-M</em>, "ohmmm") is the most well-known mantra in
+      meditation. Chanting it lengthens the out-breath and produces a gentle vibration in the chest
+      and skull that many find deeply calming. The technique below pairs a slow inhale with a long,
+      humming "ohmmm" exhale.
+
+    </p>
+
+    <h2>How to practise</h2>
+    <ol>
+      <li>Sit tall (see <a href="position.html">Posture &amp; Position</a>) and close your eyes.</li>
+      <li>Breathe in slowly through the nose for about 4 seconds.</li>
+      <li>On the out-breath, chant <strong>"ohmmm"</strong> — A...U...M — letting it fade as the breath empties (about 6–8 seconds).</li>
+      <li>Feel the vibration. Pause briefly, then repeat for several rounds.</li>
+    </ol>
+
+    <h2>Guided pacer</h2>
+    <p>Follow the orb: expand on the inhale, hum "ohmmm" as it contracts.</p>
+    <div id="orb" class="orb">ohm</div>
+    <p id="stage" class="breath-stage">Press start to begin</p>
+    <div style="display:flex; gap:0.5rem; justify-content:center;">
+      <button id="breathBtn" onclick="toggleBreath()">Start</button>
+    </div>
+
+    <p style="margin-top:2rem;"><a href="index.html" role="button">🧘 Start a session →</a></p>
+    <footer style="text-align:center; opacity:0.6; font-size:0.85rem; margin-top:2rem;"><small>Built with htmx + Pico.css.</small></footer>
+  </main>
+
+  <script>
+    const orb = document.getElementById("orb");
+    const stage = document.getElementById("stage");
+    const btn = document.getElementById("breathBtn");
+    let running = false, timers = [];
+
+    function clearTimers() { timers.forEach(clearTimeout); timers = []; }
+
+    function cycle() {
+      if (!running) return;
+      // Inhale 4s
+      stage.textContent = "Breathe in…";
+      orb.classList.remove("out"); orb.classList.add("in");
+      timers.push(setTimeout(() => {
+        if (!running) return;
+        // Exhale "ohmmm" 8s
+        stage.textContent = "Ohmmm…";
+        orb.classList.remove("in"); orb.classList.add("out");
+        timers.push(setTimeout(cycle, 8000));
+      }, 4000));
+    }
+
+    function toggleBreath() {
+      running = !running;
+      if (running) {
+        btn.textContent = "Stop";
+        cycle();
+      } else {
+        btn.textContent = "Start";
+        clearTimers();
+        orb.classList.remove("in", "out");
+        stage.textContent = "Paused";
+      }
+    }
+  </script>
+</body>
+</html>

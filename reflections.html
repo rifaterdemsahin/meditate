@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Intentional Reflections — Meditate</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css" />
+  <script src="https://unpkg.com/htmx.org@1.9.12"></script>
+  <style>
+    :root { --pico-font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+    blockquote { border-left: 0.25rem solid var(--pico-primary); }
+    .prompt { display: flex; gap: 0.75rem; align-items: flex-start; margin-bottom: 1rem; }
+    .prompt span { color: var(--pico-primary); font-weight: 700; }
+  </style>
+</head>
+<body>
+  <nav class="container-fluid">
+    <ul><li><strong>🧘 Meditate</strong></li></ul>
+    <ul>
+      <li><a href="index.html">Sessions</a></li>
+      <li>
+        <details class="dropdown">
+          <summary>Learn</summary>
+          <ul>
+            <li><a href="why.html">Why Meditate</a></li>
+            <li><a href="pabb.html">The PABB Goal</a></li>
+            <li><a href="reflections.html" aria-current="page">Intentional Reflections</a></li>
+            <li><a href="position.html">Posture &amp; Position</a></li>
+            <li><a href="breathing.html">Ohmmm Breathing</a></li>
+            <li><a href="wandering.html">Mind Wandering</a></li>
+            <li><a href="consciousness.html">Maps of Consciousness</a></li>
+          </ul>
+        </details>
+      </li>
+      <li><a href="generate.html">🎙 Generate Audio</a></li>
+    </ul>
+  </nav>
+
+  <main class="container">
+    <hgroup>
+      <h1>Intentional reflections</h1>
+      <p>Meditation without intention drifts. A clear intention turns sitting into practice.</p>
+    </hgroup>
+
+    <p>
+      An <strong>intention</strong> is not a goal you grasp at — it's a direction you lean toward.
+      Before each session, name what you're practising <em>for</em>: patience, clarity, kindness,
+      letting go. Afterwards, reflect honestly on what actually happened. This loop of intention and
+      reflection is how a habit becomes a craft.
+    </p>
+
+    <h2>Set an intention (before)</h2>
+    <div class="prompt"><span>›</span><p>What quality do I want to cultivate in the next few minutes?</p></div>
+    <div class="prompt"><span>›</span><p>What am I willing to let go of, just for now?</p></div>
+    <div class="prompt"><span>›</span><p>How do I want to carry this session into the rest of my day?</p></div>
+
+    <h2>Reflect (after)</h2>
+    <div class="prompt"><span>›</span><p>Where did my attention actually go?</p></div>
+    <div class="prompt"><span>›</span><p>What did I notice in the body, the breath, the mood?</p></div>
+    <div class="prompt"><span>›</span><p>What is one small thing I learned about my mind today?</p></div>
+
+    <blockquote>
+      "Between stimulus and response there is a space. In that space is our power to choose our
+      response. In our response lies our growth and our freedom."
+      <footer><cite>— Viktor Frankl</cite></footer>
+    </blockquote>
+
+    <p style="margin-top:2rem;">
+      Capture your reflections in the <strong>Notes</strong> panel on the
+      <a href="index.html">Sessions page</a> and download them as Markdown to build a practice journal.
+    </p>
+
+    <p><a href="index.html" role="button">🧘 Start a session →</a></p>
+    <footer style="text-align:center; opacity:0.6; font-size:0.85rem; margin-top:2rem;"><small>Built with htmx + Pico.css.</small></footer>
+  </main>
+</body>
+</html>

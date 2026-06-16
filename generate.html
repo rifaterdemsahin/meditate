@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Generate Meditation Audio — Meditate</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css" />
+  <script src="https://unpkg.com/htmx.org@1.9.12"></script>
+  <style>
+    :root { --pico-font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    @media (max-width: 700px){ .row { grid-template-columns: 1fr; } }
+    #status { min-height: 1.4rem; }
+    .lib-item { display:flex; align-items:center; justify-content:space-between; gap:0.5rem; padding:0.4rem 0; border-bottom:1px solid var(--pico-muted-border-color); }
+  </style>
+</head>
+<body>
+  <nav class="container-fluid">
+    <ul><li><strong>🧘 Meditate</strong></li></ul>
+    <ul>
+      <li><a href="index.html">Sessions</a></li>
+      <li>
+        <details class="dropdown">
+          <summary>Learn</summary>
+          <ul>
+            <li><a href="why.html">Why Meditate</a></li>
+            <li><a href="pabb.html">The PABB Goal</a></li>
+            <li><a href="reflections.html">Intentional Reflections</a></li>
+            <li><a href="position.html">Posture &amp; Position</a></li>
+            <li><a href="breathing.html">Ohmmm Breathing</a></li>
+            <li><a href="wandering.html">Mind Wandering</a></li>
+            <li><a href="consciousness.html">Maps of Consciousness</a></li>
+          </ul>
+        </details>
+      </li>
+      <li><a href="generate.html" aria-current="page">🎙 Generate Audio</a></li>
+    </ul>
+  </nav>
+
+  <main class="container">
+    <hgroup>
+      <h1>🎙 Generate meditation audio</h1>
+      <p>Turn a guided script into a spoken meditation MP3 with fal.ai text-to-speech.</p>
+    </hgroup>
+
+    <!-- API key -->
+    <article>
+      <h3>1. fal.ai API key</h3>
+      <p><small>Your key is stored only in a cookie on this device and sent directly to fal.ai. Get one at
+        <a href="https://fal.ai/dashboard/keys" target="_blank" rel="noopener">fal.ai/dashboard/keys</a>.</small></p>
+      <div class="row">
+        <input type="password" id="falKey" placeholder="fal key (key_id:key_secret)" autocomplete="off" />
+        <div style="display:flex; gap:0.5rem;">
+          <button onclick="saveKey()">Save key</button>
+          <button class="secondary outline" onclick="clearKey()">Forget</button>
+        </div>
+      </div>
+      <small id="keyStatus"></small>
+    </article>
+
+    <!-- Voice + script -->
+    <article>
+      <h3>2. Choose a voice &amp; script</h3>
+      <div class="row">
+        <label>Voice
+          <select id="voice"></select>
+        </label>
+        <label>Script
+          <select id="scriptPick" onchange="loadScript()"></select>
+        </label>
+      </div>
+      <label>Meditation script
+        <textarea id="script" rows="8" placeholder="The meditation text to be spoken…"></textarea>
+      </label>
+    </article>
+
+    <!-- Generate -->
+    <article>
+      <h3>3. Generate</h3>
+      <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
+        <button id="genBtn" onclick="generate()">🎧 Generate MP3</button>
+        <button class="secondary outline" id="saveAzureBtn" onclick="saveToAzure()" disabled>☁️ Save to Azure &amp; stream</button>
+      </div>
+      <p id="status"></p>
+      <audio id="audio" controls style="width:100%; display:none;"></audio>
+      <p id="dl" style="display:none;"><a id="dlLink" download="meditation.mp3" role="button" class="outline">⬇ Download MP3</a></p>
+    </article>
+
+    <!-- Azure library -->
+    <article>
+      <h3>☁️ Cloud library</h3>
+      <p><small>MP3s saved to the Azure <code>meditations/</code> folder, streamed back here.</small></p>
+      <div id="library"><small style="opacity:0.6;">Loading…</small></div>
+    </article>
+
+    <footer style="text-align:center; opacity:0.6; font-size:0.85rem; margin-top:2rem;"><small>Built with htmx + Pico.css · audio by fal.ai · storage on Azure Blob.</small></footer>
+  </main>
+
+  <script>
+    // --- Series of meditation voices ---
+    const VOICES = [
+      { id: "Rachel",  label: "Rachel — warm, calm guide" },
+      { id: "Adam",    label: "Adam — deep, grounding" },
+      { id: "Bella",   label: "Bella — soft, soothing" },
+      { id: "Antoni",  label: "Antoni — gentle, reassuring" },
+      { id: "Domi",    label: "Domi — bright, uplifting" },
+      { id: "Josh",    label: "Josh — slow, sleepy" },
+    ];
+
+    // --- Series of meditation scripts ---
+    const SCRIPTS = {
+      "Body Scan": "Find a comfortable position and gently close your eyes. Take a slow breath in… and let it go. Bring your attention to the top of your head. Notice any sensation there, and let it soften. Slowly move your awareness down — your face, your shoulders, your chest — releasing tension with every exhale. Continue down through your arms, your belly, your legs, all the way to your toes. Rest in the feeling of a body that is calm, heavy, and at ease.",
+      "Loving Kindness": "Settle into stillness and take three slow breaths. Silently repeat: May I be happy. May I be healthy. May I be at peace. Picture someone you love, and offer them the same words: May you be happy. May you be healthy. May you be at peace. Now widen the circle to all beings everywhere. May all beings be happy. May all beings be free.",
+      "Morning Energy": "Welcome to this new day. Sit tall and breathe in fresh, bright energy. With each inhale, imagine light filling your body. With each exhale, release any heaviness from sleep. Set a clear intention for today — one quality you wish to carry with you. Breathe it in. When you are ready, gently open your eyes and begin your day with calm focus.",
+      "Deep Sleep": "Lie down and let your body grow heavy. There is nothing to do now but rest. Feel the weight of your body sinking into the bed. With each breath, you drift a little deeper. Let go of the day. Let go of every thought. Your breathing slows. Your mind softens. Drift now, gently, into a deep and peaceful sleep.",
+      "Box Breathing": "We will breathe together in a steady square. Breathe in for four… hold for four… breathe out for four… hold for four. Again. In… two, three, four. Hold… two, three, four. Out… two, three, four. Hold… two, three, four. Let this rhythm steady your mind and calm your heart.",
+      "Consciousness Journey": "Close your eyes and notice where you are within yourself. Without judgement, simply feel your current state. With each out-breath, soften and rise — from tension toward acceptance, from acceptance toward love, from love toward peace. Rest now in spacious awareness — the quiet witness behind every passing state.",
+    };
+
+    const KEY_COOKIE = "fal_api_key";
+
+    function setCookie(name, value, days) {
+      const exp = new Date(Date.now() + days * 864e5).toUTCString();
+      document.cookie = `${name}=${encodeURIComponent(value)}; expires=${exp}; path=/; SameSite=Strict`;
+    }
+    function getCookie(name) {
+      return document.cookie.split("; ").reduce((r, c) => {
+        const [k, v] = c.split("=");
+        return k === name ? decodeURIComponent(v) : r;
+      }, "");
+    }
+    function delCookie(name) { document.cookie = `${name}=; Max-Age=0; path=/`; }
+
+    function saveKey() {
+      const k = document.getElementById("falKey").value.trim();
+      if (!k) return;
+      setCookie(KEY_COOKIE, k, 30);
+      document.getElementById("keyStatus").textContent = "Key saved to cookie ✓";
+    }
+    function clearKey() {
+      delCookie(KEY_COOKIE);
+      document.getElementById("falKey").value = "";
+      document.getElementById("keyStatus").textContent = "Key forgotten.";
+    }
+
+    // populate selects
+    const voiceSel = document.getElementById("voice");
+    VOICES.forEach(v => voiceSel.add(new Option(v.label, v.id)));
+    const scriptSel = document.getElementById("scriptPick");
+    Object.keys(SCRIPTS).forEach(name => scriptSel.add(new Option(name, name)));
+    function loadScript() {
+      document.getElementById("script").value = SCRIPTS[scriptSel.value] || "";
+    }
+
+    let lastBlob = null;
+
+    async function generate() {
+      const key = getCookie(KEY_COOKIE);
+      const status = document.getElementById("status");
+      if (!key) { status.textContent = "⚠️ Save your fal.ai key first."; return; }
+      const text = document.getElementById("script").value.trim();
+      if (!text) { status.textContent = "⚠️ Pick or write a script."; return; }
+
+      const btn = document.getElementById("genBtn");
+      btn.setAttribute("aria-busy", "true"); btn.disabled = true;
+      status.textContent = "Generating audio with fal.ai…";
+
+      try {
+        // fal.ai text-to-speech (synchronous run endpoint).
+        const res = await fetch("https://fal.run/fal-ai/playai/tts/v3", {
+          method: "POST",
+          headers: { "Authorization": "Key " + key, "Content-Type": "application/json" },
+          body: JSON.stringify({ input: text, voice: voiceSel.value })
+        });
+        if (!res.ok) throw new Error("fal.ai error " + res.status + " — " + (await res.text()).slice(0, 200));
+        const data = await res.json();
+        const url = data?.audio?.url || data?.audio_url || data?.url;
+        if (!url) throw new Error("No audio URL in response");
+
+        const audioRes = await fetch(url);
+        lastBlob = await audioRes.blob();
+        const objUrl = URL.createObjectURL(lastBlob);
+
+        const audio = document.getElementById("audio");
+        audio.src = objUrl; audio.style.display = "block";
+        const dl = document.getElementById("dl");
+        document.getElementById("dlLink").href = objUrl;
+        dl.style.display = "block";
+        document.getElementById("saveAzureBtn").disabled = false;
+        status.textContent = "✓ Generated. Play, download, or save to Azure.";
+      } catch (e) {
+        status.textContent = "✗ " + e.message;
+      } finally {
+        btn.removeAttribute("aria-busy"); btn.disabled = false;
+      }
+    }
+
+    async function saveToAzure() {
+      const status = document.getElementById("status");
+      if (!lastBlob) { status.textContent = "Generate audio first."; return; }
+      const name = (scriptSel.value + "-" + voiceSel.value).toLowerCase().replace(/[^a-z0-9]+/g, "-") + ".mp3";
+      status.textContent = "Uploading to Azure…";
+      try {
+        const res = await fetch("/api/audio?name=" + encodeURIComponent(name), {
+          method: "POST",
+          headers: { "Content-Type": "audio/mpeg" },
+          body: lastBlob
+        });
+        if (!res.ok) throw new Error("upload failed " + res.status);
+        const { url } = await res.json();
+        status.textContent = "☁️ Saved to Azure and streaming below.";
+        const audio = document.getElementById("audio");
+        audio.src = url; audio.style.display = "block";
+        loadLibrary();
+      } catch (e) {
+        status.textContent = "✗ Azure save failed (is the serverless backend configured?) — " + e.message;
+      }
+    }
+
+    async function loadLibrary() {
+      const lib = document.getElementById("library");
+      try {
+        const res = await fetch("/api/audio");
+        if (!res.ok) throw new Error();
+        const { files } = await res.json();
+        if (!files || !files.length) { lib.innerHTML = "<small style='opacity:.6'>No saved meditations yet.</small>"; return; }
+        lib.innerHTML = "";
+        files.forEach(f => {
+          const row = document.createElement("div");
+          row.className = "lib-item";
+          row.innerHTML = `<span>${f.name}</span>`;
+          const a = document.createElement("audio");
+          a.controls = true; a.src = f.url; a.preload = "none";
+          row.appendChild(a);
+          lib.appendChild(row);
+        });
+      } catch (e) {
+        lib.innerHTML = "<small style='opacity:.6'>Cloud library unavailable (configure the Azure backend to enable).</small>";
+      }
+    }
+
+    // init
+    if (getCookie(KEY_COOKIE)) document.getElementById("keyStatus").textContent = "A saved key is in use.";
+    loadScript();
+    loadLibrary();
+  </script>
+</body>
+</html>
