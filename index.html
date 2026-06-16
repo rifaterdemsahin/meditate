@@ -98,32 +98,39 @@
       0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(46,204,113,0.6); }
       50% { opacity: 0.5; box-shadow: 0 0 0 0.4rem rgba(46,204,113,0); }
     }
+    /* Battery progress indicator */
+    .battery {
+      display: flex; align-items: center; justify-content: center;
+      gap: 0.5rem; margin: 0.75rem 0 0;
+    }
+    .battery-body {
+      width: 130px; height: 46px; border: 3px solid var(--pico-muted-border-color);
+      border-radius: 7px; padding: 3px;
+    }
+    .battery-fill {
+      height: 100%; width: 0%; border-radius: 3px;
+      background: var(--pico-primary); transition: width 0.6s linear, background 0.4s;
+    }
+    .battery-cap {
+      width: 6px; height: 20px; background: var(--pico-muted-border-color);
+      border-radius: 0 3px 3px 0;
+    }
+    .battery-pct { font-variant-numeric: tabular-nums; font-weight: 700; min-width: 3.2rem; }
+    .battery.full .battery-fill { background: #2ecc71; }
+    .battery.full .battery-pct { color: #2ecc71; }
+    /* Ambient sound selector */
+    .ambient-buttons {
+      display: grid; grid-template-columns: repeat(5, 1fr); gap: 0.4rem; margin-bottom: 0.75rem;
+    }
+    @media (max-width: 560px){ .ambient-buttons { grid-template-columns: repeat(3, 1fr); } }
+    .ambient-buttons button[aria-current="true"] { box-shadow: 0 0 0 2px var(--pico-primary); }
   </style>
 </head>
 <body>
   <button class="focus-toggle outline secondary" onclick="toggleFocus()">⛶ Focus</button>
 
-  <nav class="container-fluid distract">
-    <ul><li><strong>🧘 Meditate</strong></li></ul>
-    <ul>
-      <li><a href="index.html" aria-current="page">Sessions</a></li>
-      <li>
-        <details class="dropdown">
-          <summary>Learn</summary>
-          <ul>
-            <li><a href="why.html">Why Meditate</a></li>
-            <li><a href="pabb.html">The PABB Goal</a></li>
-            <li><a href="reflections.html">Intentional Reflections</a></li>
-            <li><a href="position.html">Posture &amp; Position</a></li>
-            <li><a href="breathing.html">Ohmmm Breathing</a></li>
-            <li><a href="wandering.html">Mind Wandering</a></li>
-            <li><a href="consciousness.html">Maps of Consciousness</a></li>
-          </ul>
-        </details>
-      </li>
-      <li><a href="generate.html">🎙 Generate Audio</a></li>
-    </ul>
-  </nav>
+  <nav class="container-fluid distract" id="site-nav"></nav>
+  <script src="nav.js"></script>
 
   <main class="container">
     <hgroup class="distract" style="text-align:center; margin-top:1rem;">
@@ -148,6 +155,11 @@
     <!-- Timer -->
     <section>
       <p id="timer" class="timer">05:00</p>
+      <div id="battery" class="battery" title="Session progress — fills to 100% as you meditate">
+        <div class="battery-body"><div id="batteryFill" class="battery-fill"></div></div>
+        <div class="battery-cap"></div>
+        <span id="batteryPct" class="battery-pct">0%</span>
+      </div>
       <div class="controls distract">
         <button id="startBtn" onclick="startTimer()">Start</button>
         <button class="secondary" onclick="pauseTimer()">Pause</button>
@@ -177,6 +189,22 @@
       </div>
     </section>
 
+    <!-- Ambient sound (voiceless) -->
+    <section class="distract">
+      <h2>🌧 Ambient sound</h2>
+      <p><small>Voiceless soundscapes, synthesized in your browser — no downloads.</small></p>
+      <div class="ambient-buttons">
+        <button class="outline" data-amb="none" aria-current="true" onclick="setAmbient('none', this)">🔇 Off</button>
+        <button class="outline" data-amb="rain" onclick="setAmbient('rain', this)">🌧 Rain</button>
+        <button class="outline" data-amb="stream" onclick="setAmbient('stream', this)">💧 Water</button>
+        <button class="outline" data-amb="wind" onclick="setAmbient('wind', this)">🍃 Nature</button>
+        <button class="outline" data-amb="om" onclick="setAmbient('om', this)">🕉 Ohhh</button>
+      </div>
+      <label>Volume
+        <input type="range" id="ambVol" min="0" max="100" value="40" oninput="setAmbVol(this.value)" />
+      </label>
+    </section>
+
     <!-- Notes -->
     <section class="distract">
       <h2>📝 Notes</h2>
@@ -189,7 +217,7 @@
     </section>
 
     <footer class="distract">
-      <small>Built with htmx + Pico.css · Your notes are saved locally in your browser.</small>
+      <small>Built with htmx + Pico.css · Your notes are saved locally in your browser. · <a href="https://github.com/rifaterdemsahin/meditate" target="_blank" rel="noopener">⭐ GitHub</a></small>
     </footer>
   </main>
 
@@ -219,6 +247,14 @@
     function render() {
       timerEl.textContent = fmt(remaining);
       timerEl.classList.toggle("done", remaining === 0);
+      // Battery fills up as the session progresses toward 100%.
+      const pct = totalSeconds ? Math.round(((totalSeconds - remaining) / totalSeconds) * 100) : 0;
+      const fill = document.getElementById("batteryFill");
+      const pctEl = document.getElementById("batteryPct");
+      const battery = document.getElementById("battery");
+      if (fill) fill.style.width = pct + "%";
+      if (pctEl) pctEl.textContent = pct + "%";
+      if (battery) battery.classList.toggle("full", pct >= 100);
     }
 
     function loadVideo(min, autoplay) {
@@ -308,6 +344,73 @@
     function toggleFocus() {
       document.body.classList.toggle("focus");
     }
+
+    // --- Voiceless ambient soundscapes, synthesized with the Web Audio API ---
+    let actx = null, ambNodes = null, ambGain = null;
+    function ensureCtx() {
+      if (!actx) actx = new (window.AudioContext || window.webkitAudioContext)();
+      if (actx.state === "suspended") actx.resume();
+      return actx;
+    }
+    function makeNoiseBuffer(ctx) {
+      const len = ctx.sampleRate * 2;
+      const buf = ctx.createBuffer(1, len, ctx.sampleRate);
+      const data = buf.getChannelData(0);
+      for (let i = 0; i < len; i++) data[i] = Math.random() * 2 - 1;
+      return buf;
+    }
+    function stopAmbient() {
+      if (!ambNodes) return;
+      ambNodes.forEach(n => { try { n.stop && n.stop(); } catch (e) {} try { n.disconnect && n.disconnect(); } catch (e) {} });
+      ambNodes = null; ambGain = null;
+    }
+    function ambLevel() { return (document.getElementById("ambVol").value / 100) * 0.5; }
+
+    function setAmbient(type, btn) {
+      document.querySelectorAll(".ambient-buttons button").forEach(b => b.removeAttribute("aria-current"));
+      if (btn) btn.setAttribute("aria-current", "true");
+      const ctx = ensureCtx();
+      stopAmbient();
+      if (type === "none") return;
+
+      ambGain = ctx.createGain();
+      ambGain.gain.value = ambLevel();
+      ambGain.connect(ctx.destination);
+      ambNodes = [ambGain];
+
+      if (type === "om") {
+        // Om drone: fundamental + harmonics with a slow tremolo.
+        [136.1, 272.2, 204.15].forEach((f, i) => {
+          const o = ctx.createOscillator();
+          o.type = "sine"; o.frequency.value = f;
+          const g = ctx.createGain(); g.gain.value = i === 0 ? 0.5 : 0.15;
+          o.connect(g); g.connect(ambGain); o.start();
+          ambNodes.push(o, g);
+        });
+        const lfo = ctx.createOscillator(); lfo.frequency.value = 0.2;
+        const lg = ctx.createGain(); lg.gain.value = 0.08;
+        lfo.connect(lg); lg.connect(ambGain.gain); lfo.start();
+        ambNodes.push(lfo, lg);
+      } else {
+        // Rain / water / nature: filtered noise.
+        const src = ctx.createBufferSource();
+        src.buffer = makeNoiseBuffer(ctx); src.loop = true;
+        const filter = ctx.createBiquadFilter();
+        if (type === "rain")   { filter.type = "highpass"; filter.frequency.value = 1000; }
+        if (type === "stream") { filter.type = "bandpass"; filter.frequency.value = 700; filter.Q.value = 0.6; }
+        if (type === "wind")   { filter.type = "lowpass";  filter.frequency.value = 500; }
+        src.connect(filter); filter.connect(ambGain); src.start();
+        ambNodes.push(src, filter);
+        if (type === "wind") {
+          // Slow gusts by modulating the cutoff.
+          const lfo = ctx.createOscillator(); lfo.frequency.value = 0.1;
+          const lg = ctx.createGain(); lg.gain.value = 220;
+          lfo.connect(lg); lg.connect(filter.frequency); lfo.start();
+          ambNodes.push(lfo, lg);
+        }
+      }
+    }
+    function setAmbVol(v) { if (ambGain) ambGain.gain.value = (v / 100) * 0.5; }
 
     // --- Meditation counter (MongoDB Atlas via serverless, localStorage fallback) ---
     const COUNTER_API = "/api/meditations";

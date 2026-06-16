@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Health Benefits — Meditate</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css" />
+  <script src="https://unpkg.com/htmx.org@1.9.12"></script>
+  <style>
+    :root { --pico-font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+    .benefits { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem; }
+    .benefits article { height: 100%; }
+  </style>
+</head>
+<body>
+  <nav class="container-fluid" id="site-nav"></nav>
+  <script src="nav.js"></script>
+
+  <main class="container">
+    <hgroup>
+      <h1>Health benefits of meditation</h1>
+      <p>A regular practice touches body and mind — here's what the research consistently points to.</p>
+    </hgroup>
+
+    <h2>🧠 Mind</h2>
+    <section class="benefits">
+      <article><h3>Less stress</h3><p>Lowers cortisol and calms the stress response, easing everyday tension.</p></article>
+      <article><h3>Less anxiety &amp; depression</h3><p>Mindfulness programs are shown to reduce symptoms and relapse risk.</p></article>
+      <article><h3>Sharper focus</h3><p>Strengthens sustained attention and working memory.</p></article>
+      <article><h3>Emotional regulation</h3><p>More space between trigger and reaction; steadier moods.</p></article>
+    </section>
+
+    <h2 style="margin-top:1.5rem;">❤️ Body</h2>
+    <section class="benefits">
+      <article><h3>Lower blood pressure</h3><p>Relaxation lowers heart rate and blood pressure over time.</p></article>
+      <article><h3>Better sleep</h3><p>Quieter mind at night; helps with insomnia and sleep quality.</p></article>
+      <article><h3>Pain management</h3><p>Changes the relationship to pain, reducing its intensity and grip.</p></article>
+      <article><h3>Immune &amp; inflammation</h3><p>Associated with healthier inflammatory markers and immune response.</p></article>
+    </section>
+
+    <h2 style="margin-top:1.5rem;">🌱 Long term</h2>
+    <section class="benefits">
+      <article><h3>Healthier brain aging</h3><p>Linked to preserved grey matter and slower age-related decline.</p></article>
+      <article><h3>More self-awareness</h3><p>Clearer insight into habits and patterns, supporting change.</p></article>
+      <article><h3>Greater wellbeing</h3><p>Higher baseline life satisfaction, compassion, and resilience.</p></article>
+      <article><h3>Healthier habits</h3><p>The pause it builds helps you abstain from compulsive behaviors.</p></article>
+    </section>
+
+    <p style="margin-top:2rem; opacity:0.7;"><small>
+      Informational only — not medical advice. If you have a health condition, talk to a clinician.
+    </small></p>
+
+    <p style="margin-top:1rem;"><a href="index.html" role="button">🧘 Start a session →</a></p>
+    <footer style="text-align:center; opacity:0.6; font-size:0.85rem; margin-top:2rem;"><small>Built with htmx + Pico.css. · <a href="https://github.com/rifaterdemsahin/meditate" target="_blank" rel="noopener">⭐ GitHub</a></small></footer>
+  </main>
+</body>
+</html>
