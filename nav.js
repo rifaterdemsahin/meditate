@@ -1,5 +1,21 @@
 // Shared site navigation + BST clock, injected into <nav id="site-nav"> on every page.
 (function () {
+  // Shared responsive tweaks (injected once, applies to every page).
+  const css = `
+    #site-nav { flex-wrap: wrap; row-gap: 0.25rem; }
+    #site-nav > ul { flex-wrap: wrap; }
+    #site-nav summary, #site-nav a { padding-block: 0.4rem; }
+    #bstClock { white-space: nowrap; }
+    @media (max-width: 600px) {
+      #site-nav { padding-block: 0.25rem; }
+      #site-nav strong { font-size: 1rem; }
+      #site-nav .dropdown { margin: 0; }
+    }
+    img, iframe, video { max-width: 100%; }`;
+  const style = document.createElement("style");
+  style.textContent = css;
+  document.head.appendChild(style);
+
   const learn = [
     ["why.html", "Why Meditate"],
     ["rationale.html", "Rationale"],

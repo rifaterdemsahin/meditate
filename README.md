@@ -45,20 +45,44 @@ python3 -m http.server 8000
 
 The static pages work standalone; cloud features degrade gracefully when no backend is present.
 
-## Cloud backends (serverless)
+## Backend & deployment (Fly.io)
 
-Deploy to **Vercel** (`npm install` then `vercel`). Set these environment variables:
+The app runs as a small **Express** server (`server.js`) that serves the static pages **and** the
+API, containerized with the `Dockerfile` and deployed to **Fly.io**.
 
-| Variable | Used by | Purpose |
-| --- | --- | --- |
-| `MONGODB_URI` | `api/meditations.js`, `api/presence.js` | Session counter + live presence |
-| `AZURE_STORAGE_CONNECTION_STRING` | `api/audio.js` | Store/stream generated MP3s |
+Run it locally:
+
+```bash
+npm install
+npm start          # http://localhost:8080  (loads .env.local automatically)
+```
+
+Environment variables (set as Fly secrets in production):
+
+| Variable | Purpose |
+| --- | --- |
+| `MONGODB_URI` | Session counter + live presence (MongoDB Atlas) |
+| `AZURE_STORAGE_CONNECTION_STRING` | Store/stream generated MP3s (optional) |
+
+### Deploy
+
+Pushing to `main` triggers **GitHub Actions** (`.github/workflows/fly-deploy.yml`), which runs
+`flyctl deploy` using the `FLY_API_TOKEN` repo secret. Manual deploy:
+
+```bash
+fly secrets set MONGODB_URI="..." -a meditate-rs   # one time
+fly deploy                                          # builds Dockerfile, deploys
+```
 
 ### Endpoints
 
 - `GET/POST /api/meditations` — total completed sessions (POST increments).
 - `GET/POST /api/presence` — `{ active, total }` people meditating now (POST = heartbeat).
 - `GET/POST /api/audio` — list / upload MP3s in the Azure `meditations/` folder.
+- `GET /healthz` — liveness check.
+
+See [`docs/mongodb-atlas-where-to-find-data.md`](./docs/mongodb-atlas-where-to-find-data.md)
+for where your records live in Atlas.
 
 ### AI audio generation
 
@@ -75,5 +99,6 @@ See [`claude.md`](./claude.md) for full setup and customization details.
 ## Tech stack
 
 [Pico.css](https://picocss.com/) · [htmx](https://htmx.org/) · vanilla JS ·
-[MongoDB Atlas](https://www.mongodb.com/atlas) · [Azure Blob Storage](https://azure.microsoft.com/products/storage/blobs) ·
-[fal.ai](https://fal.ai/) · [Vercel](https://vercel.com/) serverless.
+[Express](https://expressjs.com/) · [MongoDB Atlas](https://www.mongodb.com/atlas) ·
+[Azure Blob Storage](https://azure.microsoft.com/products/storage/blobs) · [fal.ai](https://fal.ai/) ·
+[Fly.io](https://fly.io/) · [GitHub Actions](https://github.com/features/actions).

@@ -3,9 +3,17 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "description": "Distraction-free meditation app with a MongoDB-backed session counter.",
+  "description": "Distraction-free meditation app with a MongoDB-backed session counter, served by Express on Fly.io.",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
   "dependencies": {
     "@azure/storage-blob": "^12.17.0",
+    "express": "^4.19.2",
     "mongodb": "^6.3.0"
   }
 }

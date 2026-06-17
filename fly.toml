@@ -1,0 +1,22 @@
+# Fly.io configuration for the Meditate app.
+# App name is set after `fly apps create`; update if you pick a different one.
+app = "meditate-rs"
+primary_region = "lhr"
+
+[build]
+
+[http_service]
+  internal_port = 8080
+  force_https = true
+  auto_stop_machines = "stop"
+  auto_start_machines = true
+  min_machines_running = 0
+  processes = ["app"]
+
+[[vm]]
+  cpu_kind = "shared"
+  cpus = 1
+  memory_mb = 256
+
+[env]
+  PORT = "8080"

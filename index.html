@@ -124,6 +124,19 @@
     }
     @media (max-width: 560px){ .ambient-buttons { grid-template-columns: repeat(3, 1fr); } }
     .ambient-buttons button[aria-current="true"] { box-shadow: 0 0 0 2px var(--pico-primary); }
+    /* Mobile-phone responsiveness */
+    @media (max-width: 560px) {
+      .session-buttons { grid-template-columns: repeat(2, 1fr); }
+      .scoreboard { grid-template-columns: 1fr; }
+      .score { padding: 0.5rem; }
+      .controls { flex-wrap: wrap; }
+      .controls button { max-width: none; flex: 1 1 30%; }
+      .focus-toggle { top: 0.5rem; right: 0.5rem; padding: 0.35rem 0.6rem; font-size: 0.85rem; }
+      main.container { padding-inline: 1rem; }
+    }
+    @media (max-width: 380px) {
+      .ambient-buttons { grid-template-columns: repeat(2, 1fr); }
+    }
   </style>
 </head>
 <body>
